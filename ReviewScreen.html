@@ -1,0 +1,313 @@
+<template>
+  <template if:true={showModal}>
+    <section
+      role="dialog"
+      tabindex="-1"
+      aria-modal="true"
+      aria-labelledby="modal-heading-01"
+      class="slds-modal slds-fade-in-open"
+    >
+      <div class="slds-modal__container" style="max-width: 40%">
+        <button
+          class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+          onclick={hideModal}
+        >
+          <svg
+            class="slds-button__icon slds-button__icon_large"
+            aria-hidden="true"
+          >
+            <use
+              xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"
+            ></use>
+          </svg>
+          <span class="slds-assistive-text">Cancel and close</span>
+        </button>
+        <div
+          class="slds-modal__content slds-p-around_medium"
+          id="modal-content-id-1"
+        >
+          <p if:false={showModalMissingFields}>{ErrorMsgDataPrivacyLabel}</p>
+          <p if:true={showModalMissingFields}>{ErrorMsgMissingFieldsLabel}</p>
+        </div>
+        <div class="slds-modal__footer slds-modal__footer_directional">
+          <button class="slds-button slds-button_brand" onclick={hideModal}>
+            OK
+          </button>
+        </div>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+  </template>
+
+  <div class="slds-box">
+    <lightning-layout pull-to-boundary="medium" multiple-rows="true">
+      <lightning-layout-item size="12" padding="around-small">
+        <div class="div-1 slds-text-title">{SubjectLabel}</div>
+      </lightning-layout-item>
+      <template if:true={onlineAppointment}>
+        <lightning-layout-item size="12" padding="around-small">
+          <lightning-input
+            name="input1"
+            label={AddressLabel}
+            type="text"
+            variant="standard"
+            read-only="true"
+            value={serviceTerritoryAddress}
+          ></lightning-input>
+        </lightning-layout-item>
+      </template>
+
+      <lightning-layout-item size="12" padding="around-small">
+        <lightning-radio-group
+          name="radioGroup"
+          label={SalutationLabel}
+          options={optionsSalutation}
+          value={salutation}
+          read-only={personalInfoReadOnly}
+          onchange={changeSalutation}
+          type="button"
+        ></lightning-radio-group>
+        <!-- <lightning-input
+          name="input1"
+          label={SalutationLabel}
+          value={salutation}
+          variant="standard"
+          type="text"
+          required="true"
+          read-only={personalInfoReadOnly}
+          date-style="medium"
+          onchange={changeSalutation}
+        ></lightning-input> -->
+        <lightning-layout multiple-rows="true" pull-to-boundary="Small">
+          <lightning-layout-item flexibility="auto">
+            <div class="slds-p-right_small">
+              <lightning-input
+                name="firstName"
+                label={FirstNameLabel}
+                value={firstName}
+                type="text"
+                variant="standard"
+                read-only={personalInfoReadOnly}
+                onchange={changeFirstName}
+              ></lightning-input>
+            </div>
+          </lightning-layout-item>
+
+          <lightning-layout-item flexibility="auto">
+            <lightning-input
+              name="input1"
+              label={LastNameLabel}
+              value={lastName}
+              type="text"
+              variant="standard"
+              date-style="medium"
+              read-only={personalInfoReadOnly}
+              onchange={changeLastName}
+            ></lightning-input>
+          </lightning-layout-item>
+        </lightning-layout>
+
+        <lightning-layout multiple-rows="true" pull-to-boundary="small">
+          <lightning-layout-item flexibility="auto">
+            <div class="slds-p-right_small">
+              <lightning-input
+                type="email"
+                name="email1"
+                label={label.ReviewScreeneMail}
+                variant="standard"
+                value={personEmail}
+                date-style="medium"
+                read-only={personalInfoReadOnly}
+                onchange={changeEmail}
+                class="email"
+              ></lightning-input>
+            </div>
+          </lightning-layout-item>
+
+          <lightning-layout-item flexibility="auto">
+            <lightning-input
+              type="tel"
+              label={PhoneLabel}
+              name="phone2"
+              value={phone}
+              variant="standard"
+              onchange={changePhone}
+              class="phone"
+            ></lightning-input>
+          </lightning-layout-item>
+        </lightning-layout>
+      </lightning-layout-item>
+
+  <lightning-layout multiple-rows="true" pull-to-boundary="small"></lightning-layout>
+      <lightning-layout-item flexibility="auto">
+        <div class="slds-box">
+              <lightning-combobox 
+              name="country" 
+              label={CountryLabel}
+              value={value}
+              options={countryValues} 
+              onchange={changeCountry}>
+              </lightning-combobox>
+      </div>
+      </lightning-layout-item>
+    
+
+      <lightning-layout-item size="12" padding="around-small">
+        <lightning-combobox
+          name="Date selection"
+          label={DateSelectionLabel}
+          value={StudyDateSelected}
+          placeholder=""
+          options={options}
+          onchange={handleChangeDate}
+        ></lightning-combobox>
+      </lightning-layout-item>
+
+      <lightning-layout-item size="12" padding="around-small">
+        <strong
+          ><lightning-formatted-text
+            value={StudyAdvisorNameLabel}
+          ></lightning-formatted-text
+          ><lightning-formatted-text
+            value=": "
+          ></lightning-formatted-text></strong
+        ><lightning-formatted-text
+          value={serviceResources}
+        ></lightning-formatted-text>
+      </lightning-layout-item>
+
+      <lightning-layout-item size="12" padding="around-small">
+        <strong
+          ><lightning-formatted-text
+            value={TimeLabel}
+          ></lightning-formatted-text
+          ><lightning-formatted-text
+            value=": "
+          ></lightning-formatted-text></strong
+        ><lightning-formatted-date-time
+          value={schedStartTime}
+          year="numeric"
+          month="numeric"
+          day="2-digit"
+          time-zone={selectedTimezone}
+          hour12={ampm}
+        ></lightning-formatted-date-time
+        ><lightning-formatted-text value="  "></lightning-formatted-text
+        ><lightning-formatted-date-time
+          value={schedStartTime}
+          hour="2-digit"
+          minute="2-digit"
+          time-zone={selectedTimezone}
+          hour12={ampm}
+        ></lightning-formatted-date-time
+        ><lightning-formatted-text value=" - "></lightning-formatted-text
+        ><lightning-formatted-date-time
+          value={schedEndTime}
+          hour="2-digit"
+          minute="2-digit"
+          time-zone={selectedTimezone}
+          hour12={ampm}
+        ></lightning-formatted-date-time>
+      </lightning-layout-item>
+
+      <lightning-layout-item size="12" padding="around-small">
+        <strong
+          ><lightning-formatted-text
+            value={LocationLabel}
+          ></lightning-formatted-text
+          ><lightning-formatted-text
+            value=": "
+          ></lightning-formatted-text></strong
+        ><lightning-formatted-text value={location}></lightning-formatted-text>
+      </lightning-layout-item>
+
+      <lightning-layout-item size="12" padding="around-small">
+        <strong
+          ><lightning-formatted-text
+            value={TypeLabel}
+          ></lightning-formatted-text
+          ><lightning-formatted-text
+            value=": "
+          ></lightning-formatted-text></strong
+        ><lightning-formatted-text value={saType}></lightning-formatted-text>
+      </lightning-layout-item>
+
+      <!-- <lightning-layout-item size="12" padding="around-small">
+        <lightning-input
+          name="input1"
+          value={schedStartTime}
+          type="datetime"
+          disabled="true"
+          variant="standard"
+          read-only="true"
+          label={AppointmentStartLabel}
+          timezone={selectedTimezone}
+        ></lightning-input>
+      </lightning-layout-item>
+      <lightning-layout-item size="12" padding="around-small">
+        <lightning-input
+          name="input1"
+          value={schedEndTime}
+          type="datetime"
+          disabled="true"
+          variant="standard"
+          read-only="true"
+          label={AppointmentEndLabel}
+          timezone={selectedTimezone}
+        ></lightning-input>
+      </lightning-layout-item> -->
+      <lightning-layout-item size="12">
+        <lightning-layout multiple-rows="false">
+          <lightning-layout-item size="1"
+            ><lightning-input
+              name="input1"
+              class="slds-p-around_x-small"
+              value={privacyPolicy}
+              variant="standard"
+              type="checkbox"
+              message-when-value-missing={ErrorMsgDataPrivacyLabelLabel}
+              onchange={handleChange}
+            ></lightning-input
+          ></lightning-layout-item>
+          <lightning-layout-item size="10"
+            ><lightning-formatted-rich-text
+              value={ReviewScreenTextDataPrivacyLabel}
+            ></lightning-formatted-rich-text
+          ></lightning-layout-item>
+        </lightning-layout>
+      </lightning-layout-item>
+      <lightning-layout-item size="12" padding="around-small">
+        <lightning-layout pull-to-boundary="medium" multiple-rows="true">
+          <lightning-layout-item
+            padding="horizontal-medium"
+            size="12"
+            small-device-size="12"
+            medium-device-size="6"
+            large-device-size="6"
+            ><button
+              class="slds-button slds-button_brand slds-button_stretch slds-p-top_xx-small slds-p-bottom_xx-small"
+              type="button"
+              onclick={handleBack}
+            >
+              {BackButtonLabel}
+            </button></lightning-layout-item
+          >
+          <lightning-layout-item
+            padding="horizontal-medium"
+            size="12"
+            small-device-size="12"
+            medium-device-size="6"
+            large-device-size="6"
+            ><button
+              class="slds-button slds-button_brand slds-button_stretch slds-p-top_xx-small slds-p-bottom_xx-small"
+              type="button"
+              onclick={handleConfirm}
+            >
+              {ConfirmationButtonLabel}
+            </button></lightning-layout-item
+          >
+        </lightning-layout>
+      </lightning-layout-item>
+    </lightning-layout>
+  </div>
+</template>
